@@ -1,0 +1,139 @@
+<div class="content"  *ngIf="!loading">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card-box">
+                    <div class="row">
+                        <div class="col-lg-6 col-xl-6 d-flex mb-4">
+                            <h4 class="header-title m-b-30">Root</h4>
+                            <button type="button" class="btn btn-danger btn-circle mx-3" data-toggle="tooltip" title="Create Directory" (click)="centerModal(centerDataModal)" ><i class="bx bx-folder"></i> </button>
+                            <button type="button" class="btn btn-info btn-circle"  title="Upload File" (click)="largeModal(largeDataModal)"><i class="mdi mdi-cloud-upload"></i> </button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="List_files.length === 0" >
+                      <div class="col-lg-12">
+                        <div class="alert alert-warning mt-3 text-center" role="alert">
+                         Empty
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="row" *ngIf="List_files.length > 0">
+                        <div class="col-lg-3 col-xl-2" *ngFor="let file of List_files| paginate: { itemsPerPage: 12, currentPage: p }">
+                            <div class="file-man-box"><a (click)="deleteFiles(file.id)" class="file-close"><i class="fa fa-times-circle"></i></a>
+                                <div class="file-img-box">
+                                 <a style="cursor:pointer"  (click)="view(file)"> <i  *ngIf="file.extension === 'csv'" class="fa fa-file-csv" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'pdf'" class="far fa-file-pdf" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'jpg'" class="far fa-file-image" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'jpeg'" class="far fa-file-image" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'png'" class="far fa-file-image" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'docx'" class="far fa-file-word" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'doc'" class="far fa-file-word" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'pptx'" class="far fa-file-powerpoint" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'ppt'" class="far fa-file-powerpoint" style="font-size: 80px;"></i>
+                                  <i *ngIf="file.extension === 'txt'" class="far fa-file-text" style="font-size: 80px;"></i></a>
+                                 <a  style="cursor:pointer"  [routerLink]="['/files/details',file.code,file.id]"> <i *ngIf="file.is_folder" class="mdi mdi-folder" style="font-size: 80px;"></i></a>
+
+                                </div>
+                                <a  *ngIf="!file.is_folder" (click)="download(file)" class="file-download pointer"><i class="fa fa-download"></i>
+                                </a>
+                                <div class="file-man-title" *ngIf="!file.is_folder">
+                                    <h5 class="mb-0 text-overflow"><a class="pointer" (click)="view(file)" data-toggle="tooltip" title="{{file.name_real}}">{{file.name_real}}</a></h5>
+                                    <p class="mb-0"><small>{{file.size}} kb</small></p>
+                                </div>
+                                <div class="file-man-title" *ngIf="file.is_folder">
+                                  <h5 class="mb-0 text-overflow"><a class="pointer" [routerLink]="['/files/details',file.code,file.id]"   data-toggle="tooltip" title="{{file.name_real}}"  >{{file.name}}</a></h5>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 mt-4 mb-3">
+
+                              <pagination-controls class="pagination pagination-rounded"  *ngIf="List_files.length > 0" (pageChange)="p = $event"></pagination-controls>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- container -->
+</div>
+
+
+<ng-template #largeDataModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">Upload Files</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-12 mb-2">
+             <ng-select name="directory"  [(ngModel)]="folder_id">
+                    <ng-option *ngFor="let file of filesActive" [value]="file.id">{{file.name}}</ng-option>
+                 </ng-select>
+            </div>
+            <div class="col-lg-12 mt-2">
+                <dropzone class="dropzone"[message]="'Click or drag images here to upload'" (error)="onUploadError($event)" (success)="onUploadSuccess($event)"></dropzone>
+            </div>
+            <div class="mt-3">
+                <button type="button" class="btn btn-success mx-2 mb-1"  [disabled]="!loadfiles"  (click)="uploadFileDB()"><span class="glyphicon glyphicon-upload"></span> Upload All</button>
+                <button type="button" class="btn btn-warning mx-2 mb-1" (click)="clearQueue()"><span class="glyphicon glyphicon-trash"></span> Clear Queue</button>
+            </div>
+        </div>
+    </div>
+  </ng-template>
+
+
+  <ng-template #centerDataModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">Create directory </h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <form [formGroup]="dForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                      <label for="name">Name:</label>
+                      <input type="name" class="form-control" placeholder="Enter name" formControlName="name" name="name" id="name">
+
+                          <div *ngIf="f['name'].invalid && (f['name'].dirty || f['name'].touched)"
+                                class="alert">
+                              <div *ngIf="f['name'].errors?.['required']"  class="text-danger">
+                                Name is required.
+                              </div>
+                            </div>
+
+                    </div>
+                    <div class="form-group">
+                      <label for="pwd">Description:</label>
+                      <textarea class="form-control" name="description" id="description" formControlName="description" cols="30" rows="10"></textarea>
+                      <div *ngIf="f['description'].invalid && (f['description'].dirty || f['description'].touched)"
+                          class="alert">
+                        <div *ngIf="f['description'].errors?.['required']"  class="text-danger">
+                          Name is required.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-check form-checkbox-outline form-check-success mb-3 mt-4">
+                        <input type="checkbox" id="customCheckcolor2" class="form-check-input">
+                        <label for="customCheckcolor2" class="form-check-label"> is public </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary"   [disabled]="dForm.invalid">Submit</button>
+                    <button type="button" class="btn btn-danger mx-2"  (click)="modal.dismiss('Cross click')">Cancel</button>
+                  </form>
+            </div>
+        </div>
+    </div>
+  </ng-template>
+
+
+  <div  style="display: flex; justify-content: center; align-items: center; height: 40vh" *ngIf="loading">
+    <div class="spinner-border text-primary m-1" role="status"  >
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>

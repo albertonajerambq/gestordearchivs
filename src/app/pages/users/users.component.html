@@ -1,0 +1,91 @@
+
+
+
+<div class="container-fluid" >
+
+  <app-page-title title="Users List" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row" *ngIf="!loading" >
+    <div class="col-lg-12">
+      <div class="card">
+        <div  class="d-flex align-items-start mt-4 ml-4">
+          <h4  class="card-title m-4">List</h4>
+          <button  class="btn btn-success ms-auto" routerLink="/user/new">Add</button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle  table-nowrap table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Type User</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Active</th>
+                  <th scope="col">Token Send</th>
+                  <th scope="col">Change Password</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                  <tr *ngFor="let user of users | paginate: { itemsPerPage: 10, currentPage: p} ;let i = index">
+                    <td>{{i+1}}</td>
+                    <td>{{user.name}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.user_type}}</td>
+                    <td>
+                      <span [ngClass]="{' badge-pill badge-soft-success font-size-11': user.status , ' badge-pill badge-soft-danger font-size-11': !user.status }" class="badge">{{user.status ?  'active': 'Inactive'}} </span>
+                    </td>
+                    <!-- <span _ngcontent-tqt-c145="" class="badge badge-pill badge-soft-success font-size-11" ng-reflect-ng-class="[object Object]">Paid</span> -->
+
+                    <td class="text-center">
+                      <div class="form-check form-checkbox-outline form-check-info mb-3">
+                        <input type="checkbox" id="{{user.id}}" [checked] = "user.status" (change)="updateValue($event,user)"  name="status" class="form-check-input">
+                        <label  for="{{user.id}}" class="form-check-label"></label>
+                      </div>
+                    </td>
+                      <td>
+                        <div class="form-check form-checkbox-outline form-check-info mb-3">
+                          <input type="checkbox" id="send{{user.id}}" [checked] = "user.send_token"  (change)="sendChangePass($event,user)"   name="send_token" class="form-check-input">
+                          <label  for="send{{user.id}}"  class="form-check-label"></label>
+                        </div>
+
+                      </td>
+                      <td>
+                        <div class="form-check form-checkbox-outline form-check-info mb-3">
+                          <input type="checkbox" id="change{{user.id}}" [checked] = "user.change_password"    name="changepass" class="form-check-input">
+                          <label  for="change{{user.id}}"  class="form-check-label"></label>
+                        </div>
+
+                      </td>
+                    <td>
+                      <a class="text-warning" style="cursor: pointer;"  (click)="sendChangePass($event,user)"> <i class="fa fa-key"></i>  </a>
+                      <a class="text-info mx-2" style="cursor: pointer;"  [routerLink]="['/user',user.id]" routerLinkActive="router-link-active"   > <i class="mdi mdi-grease-pencil"></i>  </a>
+                    </td>
+                  </tr>
+
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 mt-4">
+              <pagination-controls *ngIf="users.length > 0" (pageChange)="p = $event"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+</div>
+<div  style="display: flex; justify-content: center; align-items: center; height: 40vh" *ngIf="loading">
+  <div class="spinner-border text-primary m-1" role="status"  >
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>

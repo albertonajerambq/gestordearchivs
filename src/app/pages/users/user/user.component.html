@@ -1,0 +1,76 @@
+<div class="container-fluid">
+
+  <!-- start page title -->
+  <app-page-title title="User" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  <!-- end page title -->
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- <h4 class="card-title">Bootstrap Validation - Normal</h4>
+          <p class="card-title-desc">Provide valuable, actionable feedback to your users with HTML5 form
+            validation–available in all our supported browsers.</p> -->
+          <form class="needs-validation" (ngSubmit)="onSubmit()" [formGroup]="registerForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="validationCustom04">Name</label>
+                  <input type="text" class="form-control" id="validationCustom04" formControlName="name"
+                    placeholder="Enter Name" [ngClass]="{'is-invalid': submit && form.name.errors}" maxlength="25">
+                  <div *ngIf="submit && form.name.errors" class="invalid-feedback">
+                    <span *ngIf="form.name.errors.required">Please provide a valid name. eg: John Smith</span>
+                    <span *ngIf="form.name.errors.maxlength">The maximum length is 25</span>
+                    <span *ngIf="form.name.errors.pattern">Enter a valid name</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="validationCustom04">Email</label>
+                  <input type="email" class="form-control" id="validationCustom04" formControlName="email"
+                    placeholder="Enter email" [ngClass]="{'is-invalid': submit && form.email.errors}" maxlength="320">
+                  <div *ngIf="submit && form.email.errors" class="invalid-feedback">
+                    <span *ngIf="form.email.errors.required">Please provide a email.</span>
+                    <span *ngIf="form.email.errors.pattern">This value should be a valid email.</span>
+                    <span *ngIf="form.name.errors.maxlength">The maximum length is 320</span>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="validationCustom03">User Type</label>
+                  <ng-select formControlName="user_type" [ngClass]="{'is-invalid': submit && form.user_type.errors}">
+                    <ng-option *ngFor="let per of selectValue" [value]="per.value">{{per.name}}</ng-option>
+                 </ng-select>
+                 <div *ngIf="submit && form.user_type.errors" class="invalid-feedback">
+                  <span *ngIf="form.user_type.errors.required">User type is required.</span>
+                </div>
+                  <!-- <input type="text" class="form-control" id="validationCustom03" formControlName="city"
+                    placeholder="City" [ngClass]="{'is-invalid': submit && form.city.errors}"> -->
+                  <!-- <div *ngIf="submit && form.city.errors" class="invalid-feedback">
+                    <span *ngIf="form.city.errors.required">Please provide a valid city.</span>
+                  </div> -->
+                </div>
+              </div>
+
+            </div>
+
+          <div>
+            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-danger mx-2 " routerLink="/users" type="button">Cancel</button>
+          </div>
+          </form>
+        </div>
+      </div>
+      <!-- end card -->
+    </div> <!-- end col -->
+
+
+  </div>
+  <!-- end row -->
+
+</div>
